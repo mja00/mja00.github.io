@@ -90,6 +90,7 @@ feed_show_tags: true
 # --- Colours / background image --- #
 
 # Personalize the colours in your website. Colour values can be any valid CSS colour
+site-css: https://beautifuljekyll.com/pro/dark-mode.min.css
 
 navbar-col: "#EAEAEA"
 navbar-text-col: "#404040"
