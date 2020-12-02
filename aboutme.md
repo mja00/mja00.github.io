@@ -1,16 +1,12 @@
 ---
 layout: page
 title: About me
-subtitle: Why you'd want to go on a date with me
+subtitle: Why you shouldn't talk to me
 ---
 
-My name is Inigo Montoya. I have the following qualities:
+I'm Matt Artist, currently a 3rd year college student working towards a computer science degree.
 
-- I rock a great mustache
-- I'm extremely loyal to my family
+My biggest accomplishments being:
+- [Building an open source livestreaming platform](https://github.com/Glimesh/glimesh.tv)
+- [Automating a large moderation community fully through Python](https://github.com/mja00/npmodbot-rewrite)
 
-What else do you need?
-
-### My story
-
-To be honest, I'm having some trouble remembering right now, so why don't you just watch [my movie](https://en.wikipedia.org/wiki/The_Princess_Bride_%28film%29) and it will answer **all** your questions.
