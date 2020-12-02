@@ -8,13 +8,13 @@ tags: [elixir]
 comments: false
 ---
 
-So I've been spending the last few months working on an [up and coming](https://github.com/Glimesh/glimesh.tv) streaming platform. Obviously we were going to need a way to globally ban accounts from the site without removing them. This is no way the best way of doing it but it works for what we needed for an alpha launch. You can view the entire PR [here](https://github.com/Glimesh/glimesh.tv/pull/132).
+So I’ve been spending the last few months working on an [up and coming streaming platform](https://github.com/Glimesh/glimesh.tv). Obviously, we would need a way to globally ban accounts from the site without removing them. This is not the best way to do it, but it works for what we needed for an alpha launch. You can view the entire PR [here](https://github.com/Glimesh/glimesh.tv/pull/132).
 
 ---
 
 ## Prepping the user table for bans
 
-First we needed to track who was actually banned, not really hard, just needed to edit our users schema to include a `is_banned` flag. Super simple, just needed to update the schema to:
+First, we needed to track who was banned, not really hard; we just needed to edit our `users` schema to include an `is_banned` flag. Super simple, only required to update the schema to:
 
 ```elixir
 schema "users" do
@@ -23,7 +23,7 @@ schema "users" do
     field :ban_reason, :string
 end
 ```
-For our case we also needed to add the `is_banned` flag to the register changeset with:
+For our case, we also needed to add the `is_banned` flag to the register changeset with:
 ```elixir
 def registration_changeset(user, attrs) do
     user
@@ -35,13 +35,13 @@ def registration_changeset(user, attrs) do
     ])
 end
 ```
-With that you can generate a new migration, `mix ecto.gen.migration add_global_bans`, and we're ready to actually implement the bans into the site.
+With that, you can generate a new migration, `mix ecto.gen.migration add_global_bans`, and we’re ready to actually implement the bans into the site.
 
 ---
 
 ## Stopping banned users from logging in
 
-This was also pretty simple. For Glimesh we have a login page for our users, we just needed to add a check for if the user is banned. This was all handled in our `user_session_controller.ex` file. 
+This was also pretty simple. For Glimesh, we have a login page for our users; we just needed to add a check for if the user is banned. This was all handled in our `user_session_controller.ex` file.
 
 We replaced our create function with
 ```elixir
@@ -53,7 +53,7 @@ We replaced our create function with
     end
   end
 ```
-And then from there we did some good ol' Elixir pattern matching on attempt_login
+And then from there, we made some good ol’ Elixir pattern matching on `attempt_login`:
 ```elixir
 # Attempts a login if the user isn't banned
 def attempt_login(conn, %{is_banned: false} = user, user_params) do
@@ -83,13 +83,13 @@ def attempt_login(conn, %{is_banned: true} = user, user_params) do
     )
 end
 ```
-This essentially stops any banned account from logging in. Now how did we handle already logged in users that get banned? Relatively simply. 
+This essentially stops any banned account from logging in. Now how did we handle already logged-in users that get banned? Relatively simply.
 
 ---
 
 ## Handling logged in users that get banned
 
-For this I basically created an entire plug to check if the user is banned as they navigate the site, and if they get banned it invalidates their session(basically logging them out). The plug I created is somewhat simple, it pretty much is called on every page load, it will get the user from the connection and check if they're banned. If they are indeed banned it will trigger a ban user function in our user auth module(basically the same as logging out minus a redirect), and then replacing their path to our homepage(needed otherwise Cowboy gets **very** angry).
+For this, I basically created an entire plug to check if the user is banned as they navigate the site, and if they get banned, it invalidates their session(basically logging them out). The plug I created is somewhat simple; it is called on every page load; it will get the user from the connection and check if they’re banned. If they are indeed banned, it will trigger a ban user function in our user auth module(basically the same as logging out minus a redirect), and then replacing their path to our homepage(needed otherwise Cowboy gets **very** angry).
 
 >plugs/ban_plug.ex
 
@@ -150,16 +150,16 @@ This here is what actually does the "logging out" of the user. You may notice th
 ---
 
 ## Finishing up the feature
-After the schema was updated, logins properly handled banned users, and sessions were invalidated on ban, there were just a few small things to clean up here and there.
+After the schema was updated, logins properly handled banned users, and sessions were invalidated on the ban; there were just a few small things to clean up here and there.
 
 #### Making it so banned users couldn't chat
-For this I just added a check to see if the user was banned and if so it raised an ArgumentError with a `User must not be banned` message. This was later swapped to our chat error handler once moderation tools were added to the chat. 
+For this, I just added a check to see if the user was banned and if so, it raised an ArgumentError with a `User must not be banned` message. This was later swapped to our chat error handler once moderation tools were added to the chat.
 
 #### Adding an ignore_banned argument to our user lookup functions
-Another simple task, since we wanted to hide any banned user from being searched I added `ignore_banned \\ false` to our username lookup functions that by default would have Ecto skip over any banned users. This argument will come back later when we're creating our admin team's dashboard and they need to be able to search for banned users. But pretty much everything else will ignore banned users. 
+Another simple task, since we wanted to hide any banned user from being searched, I added `ignore_banned \\ false` to our username lookup functions that, by default, would have Ecto skip over any banned users. This argument will come back later when we’re creating our admin team’s dashboard, and they need to be able to search for banned users. But pretty much everything else will ignore banned users.
 
 ---
 
 ## All done! 
 
-That's pretty much it for the site wide ban feature. We wanted to make sure it wasn't overly complex and could be reliable. It's most definitely not the best way, and I've already admitted that to the team, we'll be re-doing it at somepoint in the future but needed something that we could use during our alpha. This was also created on 09/30/2020, which was about 2 months into my journey learning Elixir. Again, if you wanna view the entire PR to see the code around this, you can do so [here](https://github.com/Glimesh/glimesh.tv/pull/132). 
+That’s pretty much it for the site-wide ban feature. We wanted to make sure it wasn’t overly complicated and could be reliable. It’s most definitely not the best way, and I’ve already admitted that to the team; we’ll be re-doing it in the future but needed something that we could use during our alpha. This was also created on 09/30/2020, which was about 2 months into my journey learning Elixir. Again, if you wanna view the entire PR to see the code around this, you can do so [here](https://github.com/Glimesh/glimesh.tv/pull/132).
